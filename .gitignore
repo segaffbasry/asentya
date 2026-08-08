@@ -1,0 +1,28 @@
+# Dependencies
+/node_modules
+/.pnpm-store
+
+# Next.js output
+/.next
+/out
+
+# Production output
+/build
+/dist
+/.wrangler
+
+# Local environment files
+.env*
+!.env.example
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# macOS
+.DS_Store
