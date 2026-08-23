@@ -24,24 +24,24 @@ const PERSON_IMAGE_BY_SLUG = {
   "elizabeth-yunita-krisnawati": "/images/elizabeth.avif",
 } as const satisfies Record<Person["slug"], string>;
 
-function PersonName({ person }: Readonly<{ person: Person }>) {
-  if (!person.path) {
-    return <>{person.name}</>;
-  }
-
-  return (
-    <Link className="person-card__profile-link" href={person.path}>
-      {person.name}
-    </Link>
-  );
-}
-
 function PersonCard({ person }: Readonly<{ person: Person }>) {
+  const hasProfile = Boolean(person.path);
+
   return (
     <article
-      className={`person-card person-card--${person.role.toLowerCase()}`}
+      className={`person-card person-card--${person.role.toLowerCase()}${
+        hasProfile ? " person-card--linked" : ""
+      }`}
       data-person={person.slug}
     >
+      {person.path ? (
+        <Link
+          aria-label={`View ${person.name}'s profile`}
+          className="person-card__profile-link"
+          href={person.path}
+        />
+      ) : null}
+
       <figure className="person-card__media">
         <Image
           className="person-card__image"
@@ -54,9 +54,7 @@ function PersonCard({ person }: Readonly<{ person: Person }>) {
 
       <div className="person-card__content">
         <div className="person-card__identity">
-          <h3 className="person-card__name">
-            <PersonName person={person} />
-          </h3>
+          <h3 className="person-card__name">{person.name}</h3>
           <p className="person-card__role">{person.role}</p>
         </div>
 
@@ -109,7 +107,7 @@ function PeopleGroup({
 export default function PeoplesPage() {
   return (
     <div className="inner-page peoples-page">
-      <SiteHeader variant="light" />
+      <SiteHeader variant="transparent" />
 
       <main id="main-content" className="peoples-page__main" tabIndex={-1}>
         <PageBanner

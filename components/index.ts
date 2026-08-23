@@ -2,6 +2,7 @@ export { ArrowLink } from "./ArrowLink";
 export type { ArrowDirection, ArrowLinkProps } from "./ArrowLink";
 export { Footer } from "./Footer";
 export type { FooterContact, FooterLink, FooterProps } from "./Footer";
+export { HomeScrollMotion } from "./HomeScrollMotion";
 export { PageBanner } from "./PageBanner";
 export { InsightCard } from "./InsightCard";
 export type { PageBannerProps } from "./PageBanner";

@@ -140,7 +140,7 @@ export function SiteHeader({
         ".home-hero, .page-banner",
       );
       const threshold = leadSection
-        ? leadSection.offsetTop + leadSection.offsetHeight - 72
+        ? leadSection.offsetTop + leadSection.offsetHeight
         : 48;
       setIsScrolled(window.scrollY > threshold);
     };
@@ -194,9 +194,7 @@ export function SiteHeader({
     document.addEventListener("keydown", handleKeyDown);
 
     const focusFrame = window.requestAnimationFrame(() => {
-      mobileMenuRef.current
-        ?.querySelector<HTMLElement>("a[href], button:not([disabled])")
-        ?.focus();
+      mobileMenuRef.current?.focus({ preventScroll: true });
     });
 
     return () => {
@@ -244,6 +242,7 @@ export function SiteHeader({
           <span className="site-header__menu-icon" aria-hidden="true">
             <span />
             <span />
+            <span />
           </span>
         </button>
       </div>
@@ -258,6 +257,7 @@ export function SiteHeader({
         aria-modal="true"
         aria-hidden={!isMenuOpen}
         inert={isMenuOpen ? undefined : true}
+        tabIndex={-1}
       >
         <button
           className="site-header__mobile-backdrop"

@@ -13,7 +13,7 @@ export const metadata = createSiteMetadata({
 export default function ContactPage() {
   return (
     <div className="inner-page contact-page">
-      <SiteHeader variant="light" />
+      <SiteHeader sticky variant="light" />
 
       <main id="main-content" className="contact-page__main" tabIndex={-1}>
         <section

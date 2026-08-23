@@ -1,6 +1,7 @@
 import {
   ArrowLink,
   Footer,
+  HomeScrollMotion,
   InsightCard,
   ReachUs,
   ServiceAccordion,
@@ -13,18 +14,21 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="home-page">
+      <HomeScrollMotion />
       <SiteHeader variant="transparent" />
 
       <main id="main-content" tabIndex={-1}>
       <section className="home-hero" aria-labelledby="home-title">
-        <Image
-          className="home-hero__image"
-          src="/images/home-hero.avif"
-          alt="Modern glass architecture layered with warm city lights"
-          fill
-          priority
-          sizes="100vw"
-        />
+        <div className="home-hero__media">
+          <Image
+            className="home-hero__image"
+            src="/images/home-hero.avif"
+            alt="Modern glass architecture layered with warm city lights"
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
         <span className="home-hero__shade" aria-hidden="true" />
         <div className="home-hero__inner">
           <h1 id="home-title" className="home-hero__title">

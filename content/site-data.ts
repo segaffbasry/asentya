@@ -178,7 +178,7 @@ export const site = {
     linksHeading: "Links",
     links: footerNavigation,
     copyright:
-      "© 2025 Asentya Legal Advisor | All Rights Reserved | Prior results do not guarantee a similar outcome",
+      "© 2026 Asentya Legal Advisor | All Rights Reserved | Prior results do not guarantee a similar outcome",
   },
 } as const;
 
