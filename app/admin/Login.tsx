@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { Loader } from "./Loader";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import { ArrowRightIcon, EyeClosedIcon, EyeOpenIcon, ReloadIcon } from "@radix-u
 
 export function Login({ configured }: { configured: boolean }) {
   const router = useRouter();
+  const [refreshing, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,12 +22,13 @@ export function Login({ configured }: { configured: boolean }) {
       const response = await fetch("/api/admin/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: form.get("email"), password: form.get("password") }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      router.refresh();
+      startTransition(() => router.refresh());
     } catch (error) { setError(error instanceof Error ? error.message : "Unable to sign in. Please try again."); }
     finally { setBusy(false); }
   }
 
   return <div className="cms-login-wrap">
+    {(busy || refreshing) && <Loader label="Opening your workspace" />}
     <Link className="cms-login-brand" href="/" aria-label="Asentya home"><Image src="/images/logo-color.svg" width={142} height={51} alt="Asentya Legal Advisor" priority /></Link>
     <section className="cms-login-card" aria-labelledby="login-title">
       <h1 id="login-title">Sign in to your account</h1>

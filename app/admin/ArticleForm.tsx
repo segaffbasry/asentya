@@ -5,7 +5,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import type { CmsArticle, CmsEntry } from "@/lib/cms-types";
-import { ArrowLeftIcon, ArrowTopRightIcon, CheckIcon, Cross2Icon, EyeOpenIcon, FontBoldIcon, FontItalicIcon, HeadingIcon, ImageIcon, Link2Icon, ListBulletIcon, QuoteIcon, ResetIcon, TextAlignLeftIcon, UploadIcon } from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, CheckIcon, Cross2Icon, EyeOpenIcon, FontBoldIcon, FontItalicIcon, HeadingIcon, ImageIcon, Link2Icon, ListBulletIcon, QuoteIcon, ResetIcon, TextAlignLeftIcon, UploadIcon } from "@radix-ui/react-icons";
 
 function newArticle(): CmsArticle {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -25,6 +25,8 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
   const coverFile = useRef<HTMLInputElement>(null);
   const inlineFile = useRef<HTMLInputElement>(null);
   const previewDialog = useRef<HTMLDialogElement>(null);
+  const panelDialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => { panelDialog.current?.showModal(); }, []);
   const editor = useEditor({
     extensions: [StarterKit.configure({ link: { openOnClick: false, protocols: ["https", "http", "mailto", "tel"] } }), Image],
     content: initial?.article.body || "",
@@ -75,16 +77,12 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
   }
 
   const disabled = busy || uploading;
-  return <>
-    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}><ArrowLeftIcon aria-hidden="true" />Articles</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}><EyeOpenIcon aria-hidden="true" />Preview</button><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}><CheckIcon aria-hidden="true" />{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><button className="cms-button cms-primary" onClick={() => save(true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"}<ArrowTopRightIcon aria-hidden="true" /></button></div></div>
+  return <dialog ref={panelDialog} className="cms-editor-panel" aria-label={initial ? "Edit article" : "New article"} onCancel={(event) => { event.preventDefault(); if (!disabled) close(); }}>
+    {(busy || uploading) && <div className="cms-operation-bar" role="status"><span /><span className="cms-sr-only">{uploading ? "Uploading image" : "Saving article"}</span></div>}
+    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}><Cross2Icon aria-hidden="true" />Close</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}><EyeOpenIcon aria-hidden="true" />Preview</button><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}><CheckIcon aria-hidden="true" />{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><button className="cms-button cms-primary" onClick={() => save(true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"}<ArrowTopRightIcon aria-hidden="true" /></button></div></div>
     {error && <p className="cms-error" role="alert">{error}</p>}
     <div className="cms-editor-grid">
       <section className="cms-writing-card"><p className="cms-eyebrow">{initial ? "EDIT ARTICLE" : "NEW ARTICLE"}</p>
-        <label className="cms-title-field"><span className="cms-sr-only">Article title</span><input placeholder="Your article title" value={article.title} maxLength={250} onChange={(event) => {
-          const title = event.target.value;
-          setArticle((current) => ({ ...current, title, ...(!slugEdited ? { slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") } : {}) })); setDirty(true);
-        }} /></label>
-        <label className="cms-byline-field"><span className="cms-sr-only">Author byline</span><input placeholder="By Author Name | Role" value={article.byline} onChange={(event) => change("byline", event.target.value)} /></label>
         <div className="cms-toolbar" role="toolbar" aria-label="Article formatting">
           <button title="Bold" aria-label="Bold" onClick={() => editor?.chain().focus().toggleBold().run()}><FontBoldIcon aria-hidden="true" /></button>
           <button title="Italic" aria-label="Italic" onClick={() => editor?.chain().focus().toggleItalic().run()}><FontItalicIcon aria-hidden="true" /></button>
@@ -107,7 +105,12 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
         <p className="cms-writing-hint">Partner contact details and the standard disclaimer are added automatically.</p>
         <input ref={inlineFile} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(event) => { void upload(event.target.files?.[0], true); event.target.value = ""; }} />
       </section>
-      <aside className="cms-details"><div className="cms-detail-card"><h2>Article details</h2>
+      <aside className="cms-details"><div className="cms-detail-card"><h2>Article details <span className="cms-badge is-published">{article.published ? "Live" : "Draft"}</span></h2>        <label className="cms-title-field"><span>Title</span><input placeholder="Your article title" value={article.title} maxLength={250} onChange={(event) => {
+          const title = event.target.value;
+          setArticle((current) => ({ ...current, title, ...(!slugEdited ? { slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") } : {}) })); setDirty(true);
+        }} /></label>
+        <label className="cms-byline-field"><span>Author</span><input placeholder="By Author Name | Role" value={article.byline} onChange={(event) => change("byline", event.target.value)} /></label>
+
         <label>URL name<input value={article.slug} disabled={Boolean(initial)} placeholder="your-article-title" onChange={(event) => { setSlugEdited(true); change("slug", event.target.value); }} /><small>{initial ? "The URL is fixed to keep existing links working." : "Lowercase words, separated by hyphens."}</small></label>
         <label>Article date<input type="date" value={article.date} onChange={(event) => change("date", event.target.value)} /></label>
         <label>Category<select value={article.category} onChange={(event) => change("category", event.target.value)}>{["Insights", "Alerts", "Awards"].map((category) => <option key={category}>{category}</option>)}</select></label>
@@ -121,5 +124,5 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
       }}>Move back to drafts</button>}</aside>
     </div>
     {preview && <dialog ref={previewDialog} className="cms-preview" aria-labelledby="preview-title" onCancel={() => setPreview(false)}><div className="cms-preview-top"><span>Article preview</span><button className="cms-button cms-secondary" onClick={() => setPreview(false)}><Cross2Icon aria-hidden="true" />Close preview</button></div><article><p className="cms-eyebrow">{article.category} · {article.date}</p><h1 id="preview-title">{article.title || "Untitled article"}</h1>{article.image && <div className="cms-preview-cover" style={{ backgroundImage: `url(${JSON.stringify(coverPreview || article.image)})` }} role="img" aria-label="Article cover" />}<p>{article.byline}</p><div className="cms-prose" dangerouslySetInnerHTML={{ __html: article.body }} /></article></dialog>}
-  </>;
+  </dialog>;
 }
