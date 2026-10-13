@@ -124,11 +124,10 @@ export function InsightArticlePage({
             <div className="article-body">
               <p className="article-body__byline">{article.byline}</p>
 
-              {article.body.map((paragraph, index) => (
-                <p key={index}>
-                  <ArticleRichText content={paragraph} />
-                </p>
-              ))}
+              <div
+                className="article-body__rich-text"
+                dangerouslySetInnerHTML={{ __html: article.bodyHtml }}
+              />
 
               <p className="article-body__contact">
                 <ArticleRichText content={article.contactParagraph} />

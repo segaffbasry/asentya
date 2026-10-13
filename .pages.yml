@@ -1,0 +1,68 @@
+media:
+  input: public/images
+  output: /images
+  extensions: [jpg, jpeg, png, webp, avif, gif]
+  rename: safe
+
+content:
+  - name: insights
+    label: Articles
+    type: collection
+    path: content/insights
+    format: json
+    filename: "{fields.slug}.json"
+    subfolders: false
+    view:
+      primary: title
+      fields: [title, published, date, category]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Article title
+        type: string
+        required: true
+      - name: slug
+        label: URL name
+        type: string
+        required: true
+        description: "Use lowercase words separated by hyphens. Keep this unchanged after publishing."
+      - name: published
+        label: Publish on website
+        type: boolean
+        default: false
+        description: "Leave off to save a draft. Turn on and save to publish. The website updates after its build finishes."
+      - name: date
+        label: Article date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: category
+        label: Category
+        type: select
+        default: Insights
+        options:
+          values: [Insights, Alerts, Awards]
+      - name: byline
+        label: Author
+        type: string
+        required: true
+        description: "For example: By Elizabeth Yunita Krisnawati | Associate"
+      - name: excerpt
+        label: Short summary
+        type: text
+        required: true
+        description: "Shown on article cards and in search results."
+      - name: image
+        label: Cover image
+        type: image
+        required: true
+      - name: body
+        label: Article
+        type: rich-text
+        required: true
+        description: "Write the article here. The partner contact details and standard disclaimer are added automatically."
+        options:
+          format: html
+          switcher: false

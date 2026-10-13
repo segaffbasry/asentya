@@ -1,3 +1,5 @@
+import articleEntries from "./insights.generated.json";
+
 export type PrimaryPagePath =
   | "/"
   | "/about"
@@ -26,9 +28,7 @@ export type ServiceSlug =
   | "criminal-proceedings"
   | "private-clients";
 
-export type InsightSlug =
-  | "indonesia-eases-foreign-investment-rules-through-bkpm-regulation"
-  | "trademarks-deletion";
+export type InsightSlug = string;
 
 export type InsightPath = `/insights/${InsightSlug}`;
 export type CareerSlug = "job-2319";
@@ -83,11 +83,10 @@ export interface InsightArticle {
   readonly category: string | null;
   readonly publishedDate: string;
   readonly publishedDateIso: string;
-  readonly authorSlug: PersonSlug;
   readonly byline: string;
   readonly excerpt: string;
   readonly imageUrl: string;
-  readonly body: readonly RichTextParagraph[];
+  readonly bodyHtml: string;
   readonly contactParagraph: RichTextParagraph;
   readonly disclaimerLabel: RichTextParagraph;
   readonly disclaimer: RichTextParagraph;
@@ -374,167 +373,35 @@ export const people = [
   },
 ] as const satisfies readonly Person[];
 
-const sharedArticlePageDescription =
-  "Asentya Legal Advisor is an Indonesian law firm which offer a broad field of legal services, stretching from commercial transaction or corporate needs on a daily basis to a challenging litigation matters.";
-
-export const insights = [
-  {
-    slug: "indonesia-eases-foreign-investment-rules-through-bkpm-regulation",
-    path: "/insights/indonesia-eases-foreign-investment-rules-through-bkpm-regulation",
-    title:
-      "Indonesia Eases Foreign Investment Rules Through BKPM Regulation No. 5/2025",
-    pageTitle:
-      "Indonesia Eases Foreign Investment Rules Through BKPM Regulation No. 5/2025 - Free SaaS Website Kit",
-    pageDescription: sharedArticlePageDescription,
-    category: "Alerts",
-    publishedDate: "Oct 10, 2025",
-    publishedDateIso: "2025-10-10",
-    authorSlug: "faraz-almira-arelia",
-    byline: "By Faraz Almira Arelia | Associate",
-    excerpt: "Uncover the newest BKPM regulations",
-    imageUrl: "/images/insight-bkpm.avif",
-    body: [
-      [
-        "The Indonesian government has taken another significant step to strengthen its investment climate by issuing Ministry of Investment and Downstream Industry/Investment Coordinating Board (“",
-        { text: "BKPM", strong: true },
-        "”) Regulation No. 5 of 2025, which came into effect on 2 October 2025. Enacted by BKPM, this regulation replaces 3 (three) previous investment regulations: No. 5/2021, No. 3/2021, and No. 4/2021, and forms part of the broader structural reform agenda launched under the Job Creation Law.",
-      ],
-      "The new regulation is closely linked to Government Regulation No. 28/2025, which mandates the enhancement of Indonesia’s Online Single Submission (OSS) system. In line with this mandate, BKPM Regulation No. 5/2025 introduces 3 (three) new core subsystems within the OSS framework: basic requirements, investment facilities, and partnership mechanisms. The reform aims to streamline investment procedures, reinforce legal certainty, and minimize regulatory overlap that has previously created confusion for foreign and domestic investors.",
-      "A key highlight of the regulation is the substantial reduction in minimum paid-up capital for Foreign Investment Companies (PT PMA). Under earlier rules, PT PMA were required to have at least IDR 10 billion in paid-up capital. The new regulation lowers this amount to IDR 2.5 billion, making Indonesia more accessible for small- and medium-scale foreign investors. However, the regulation introduces a safeguard: the paid-up capital must remain in the company’s account for at least 12 (twelve) months, except when used for asset purchases, development activities, or operational expenses.",
-      "Furthermore, the regulation introduces streamlined licensing procedures for certain business activities. Under Article 41, trading or service businesses operating in shared commercial spaces, such as malls, office buildings, or commercial complexes, may utilize the basic licensing approvals already obtained by the building owner or manager. As a result, business applicants can submit their PB or PB-UMKU applications by relying on the building’s existing permits, eliminating the need to secure the same foundational approvals independently.",
-      "Article 43 further simplifies requirements for business expansion projects. Specifically, companies are exempt from obtaining a new Spatial Suitability Approval (KKPR) when their expansion only increases production capacity, adds supporting facilities on the same site, or integrates new activities either vertically within the supply chain or horizontally within the same business group. This exemption applies as long as the business has existing KKPR and land-use rights, and the expansion occurs within the same land area by the same legal entity.",
-      "Finally, Article 44 provides additional flexibility for supporting or ancillary business activities located at the same site as the primary operation. These supporting activities may rely on the main business’s KKPR and environmental approvals, provided they remain covered within the existing environmental documents. Where new construction is required to support these activities, the regulation allows businesses to obtain a Building Approval (PBG) and subsequently secure a Certificate of Building Worthiness (SLF), ensuring procedural clarity and regulatory efficiency.",
-      "The Ministry of Investment and Downstream Industry expects the revised capital policy to encourage greater investment participation and support Indonesia’s ambitious plan to achieve 8% (eight percent) economic growth over the coming years. To reach this target, the government aims to attract approximately IDR 13,032.8 trillion in combined foreign and domestic investment within the next 5 (five) years.",
-      "Overall, BKPM Regulation 5/2025 reflects Indonesia’s ongoing commitment to improving the ease of doing business and creating a more transparent and predictable investment environment. As the country continues to refine its regulatory framework, both established and emerging investors may find new opportunities to participate in Indonesia’s rapidly developing economy.",
-    ],
-    contactParagraph: [
-      "For further information or queries, kindly reach out to our partner Zidny Assegaf ",
-      {
-        text: "(z.assegaf@asentya.com)",
-        emphasis: true,
-        href: "mailto:z.assegaf@asentya.com",
-      },
-      " or Raditya Rahmadhan ",
-      {
-        text: "(r.rahmadhan@asentya.com)",
-        emphasis: true,
-        href: "mailto:r.rahmadhan@asentya.com",
-      },
-      ".",
-    ],
-    disclaimerLabel: [{ text: "Disclaimer:", emphasis: true }],
-    disclaimer: [
-      {
-        text: "This insights is prepared for general information purposes and should not be taken as a legal advice. Asentya Legal Advisor bear no responsibility due to losses arising from the use of this general information.",
-        emphasis: true,
-      },
-    ],
-    copyright: "© Asentya Legal Advisor | 2026",
-  },
-  {
-    slug: "trademarks-deletion",
-    path: "/insights/trademarks-deletion",
-    title: "Deletion of Registered Trademarks Due to Non-Use",
-    pageTitle:
-      "Deletion of Registered Trademarks Due to Non-Use - Free SaaS Website Kit",
-    pageDescription: sharedArticlePageDescription,
-    category: "Insights",
-    publishedDate: "Jul 24, 2026",
-    publishedDateIso: "2026-07-24",
-    authorSlug: "elizabeth-yunita-krisnawati",
-    byline: "By Elizabeth Yunita Krisnawati | Associate",
-    excerpt:
-      "Understand on how to apply for the deletion of an unused trademark",
-    imageUrl: "/images/insight-trademarks.avif",
-    body: [
-      [
-        "The term “Trademark” under Article 1 of Law Number 15 of 2001 concerning Trademarks, as lastly amended by Law Number 20 of 2016 concerning Trademarks and Geographical Indications (“",
-        { text: "TGI Law", strong: true },
-        "”), is defined as a sign in the form of an image, logo, name, word, letter, number, or color composition, whether in two-dimensional or three-dimensional form. A trademark serves to distinguish goods and/or services produced by individuals or legal entities in the trade of goods and services.",
-      ],
-      [
-        "Trademark Registration is an essential step for Trademark owners to obtain protection for their Marks. However, Trademark rights will only be granted by the Directorate General of Intellectual Property (“",
-        { text: "DGIP", strong: true },
-        "”) if the Trademark application is filed in good faith. In addition, Applicants must ensure compliance with the applicable legal requirements in order for their Trademark applications to proceed to registration.",
-      ],
-      "In practice, even though there are comprehensive provisions governing the registration of Trademarks under the TGI Law, it is not uncommon for Trademark applications to  submit Trademarks that are identical or similar to previously registered trademarks. Such circumstances often result in the rejection of Trademark applications on the grounds of similarity to previously registered Marks. Furthermore, the TGI Law stipulates that, under certain conditions, registered Trademarks may be deleted or revoked. The deletion of a registered Trademark can be initiated by the Trademark Owner, the Ministry of Law through the DGIP, or by a Third Party.",
-      [
-        "With respect to deletion initiated by the ",
-        { text: "Trademark owner", strong: true },
-        ", Article 72 of the TGI Law stipulates that a request for deletion of a registered Trademark may be submitted by the Trademark owner directly or through its authorized representative. Such deletion may be processed through the DGIP Trademark portal by filing an online ",
-        {
-          text: "(https://merek.dgip.go.id)",
-          emphasis: true,
-          href: "https://merek.dgip.go.id",
-        },
-        " post-registration application for the recorded of Trademark deletion. Documents generally required for such application include the Owner’s Information, the Trademark Certificate, a Power of Attorney (if represented by an Intellectual Property Consultant), and a Written Request for Deletion of the Trademark Registration.",
-      ],
-      [
-        "A registered Trademark may also be deleted by the ",
-        { text: "Ministry of Law through the DGIP", strong: true },
-        ". This may occur where the registered Trademark is found to be ",
-        {
-          text: "identical or substantially similar to another mark; contrary to the state ideology, prevailing laws and regulations, morality, religion, decency, or public order; or similar to traditional cultural expressions, intangible cultural heritage, or names and logos that have become part of a longstanding tradition.",
-          strong: true,
-        },
-      ],
-      [
-        "The procedure for the Ministry of Law through the DGIP is further regulated under Government Regulation Number 90 of 2019 concerning Procedures for Application, Examination, and Appeal Resolution before the Trademark Appeal Commission (“",
-        { text: "GR 90/2019", strong: true },
-        "”). Before the deletion of a registered Trademark under the Ministry of Law through the DGIP, an examination and recommendation from the Trademark Appeal Commission is required, confirming that the deletion requirements have been met, as stipulated in Article 31 of GR 90/2019.",
-      ],
-      [
-        "A registered Trademark may also be deleted in the form of a lawsuit filed by a ",
-        { text: "third party", strong: true },
-        " in the Commercial Court on the grounds that the Trademark has not been used for 3 (three) consecutive years in the trade of goods and/or services from the date of its registration or its last use, regardless of the reason, except where such non-use results from import restrictions, temporary marketing authorization prohibitions, or other similar restrictions established by Government Regulation.",
-      ],
-      "A Deletion Action brought by a Third Party cannot be filed by just any person. The Third Party must demonstrate a legitimate legal interest in the deletion of the Trademark, such as a business actor seeking to register its own Trademark but being obstructed by an existing registered Trademark that is no longer in use, a party intending to use a similar mark, or another Trademark owner who has suffered prejudice as a result of the registration. Evidence commonly required to support such Action includes the Third Party’s Identification Documents, a copy of the Registered Trademark Certificate, market survey reports concerning the circulation of goods and/or services under the registered Trademark, witness statements from business actors, distributors, or consumers, product catalogs, and proof of sales through online marketplaces.",
-      [
-        "Significant changes regarding Trademark deletion actions by Third Parties have arisen following Constitutional Court Decision Number 144/PUU-XXI/2023 (“",
-        {
-          text: "Constitutional Court Decision 144/2023",
-          strong: true,
-        },
-        "”). In this decision, the Constitutional Court held that a",
-        {
-          text: " deletion action may only be filed where the Trademark has not been used for 5 (five) consecutive years",
-          strong: true,
-        },
-        ". Furthermore, the Court expanded the exception relating to ",
-        {
-          text: "other similar restrictions to include force majeure circumstances established by Government Regulation.",
-          strong: true,
-        },
-        " As a result, Trademark owners are afforded a longer period of non-use before their Trademarks may be challenged for deletion by interested parties.",
-      ],
-      "A Trademark deletion action must be filed with the Commercial Court having jurisdiction over the defendant’s domicile. Pursuant to Article 85 of the TGI Law, Trademark deletion proceedings must be completed within 90 (ninety) calendar days from the date the case is assigned to the panel of judges and may be extended for a maximum of 30 (thirty) calendar days with the approval of the Chief Justice of the Supreme Court.",
-      "Any objection to the deletion of a Trademark, whether initiated by the Ministry of Law through the DGIP or by a Third Party, may be challenged through a cassation appeal to the Supreme Court. Any deletion of a registered Trademark, whether initiated by the Trademark owner, the Ministry of Law through the DGIP, or a Third Party, must be recorded and published in the Official Trademark Gazette. Upon deletion, the Trademark owner loses its Exclusive Rights over the Trademark and is no longer entitled to legal protection for the Trademark. Moreover, the deletion of a registered Trademark may create an opportunity for other parties to apply for registration of the deleted Trademark.",
-    ],
-    contactParagraph: [
-      "For further information or queries, kindly reach out to our partner Zidny Assegaf ",
-      {
-        text: "(z.assegaf@asentya.com)",
-        emphasis: true,
-        href: "mailto:z.assegaf@asentya.com",
-      },
-      " or Raditya Rahmadhan ",
-      {
-        text: "(r.rahmadhan@asentya.com)",
-        emphasis: true,
-        href: "mailto:r.rahmadhan@asentya.com",
-      },
-      ".",
-    ],
-    disclaimerLabel: [{ text: "Disclaimer:", emphasis: true }],
-    disclaimer: [
-      {
-        text: "This insights is prepared for general information purposes and should not be taken as a legal advice. Asentya Legal Advisor bear no responsibility due to losses arising from the use of this general information.",
-        emphasis: true,
-      },
-    ],
-    copyright: "© Asentya Legal Advisor | 2026",
-  },
-] as const satisfies readonly InsightArticle[];
+export const insights: readonly InsightArticle[] = articleEntries.map((entry) => ({
+  slug: entry.slug,
+  path: `/insights/${entry.slug}`,
+  title: entry.title,
+  pageTitle: entry.title,
+  pageDescription: entry.excerpt,
+  category: entry.category || null,
+  publishedDate: new Intl.DateTimeFormat("en-US", {
+    month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
+  }).format(new Date(`${entry.date}T00:00:00Z`)),
+  publishedDateIso: entry.date,
+  byline: entry.byline,
+  excerpt: entry.excerpt,
+  imageUrl: entry.image,
+  bodyHtml: entry.body,
+  contactParagraph: [
+    "For further information or queries, kindly reach out to our partner Zidny Assegaf ",
+    { text: "(z.assegaf@asentya.com)", emphasis: true, href: "mailto:z.assegaf@asentya.com" },
+    " or Raditya Rahmadhan ",
+    { text: "(r.rahmadhan@asentya.com)", emphasis: true, href: "mailto:r.rahmadhan@asentya.com" },
+    ".",
+  ],
+  disclaimerLabel: [{ text: "Disclaimer:", emphasis: true }],
+  disclaimer: [{
+    text: "This insights is prepared for general information purposes and should not be taken as a legal advice. Asentya Legal Advisor bear no responsibility due to losses arising from the use of this general information.",
+    emphasis: true,
+  }],
+  copyright: "© Asentya Legal Advisor | 2026",
+}));
 
 export const careers = [
   {

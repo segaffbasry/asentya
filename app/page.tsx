@@ -121,7 +121,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="home-insights__grid">
-          {insights.map((article, index) => (
+          {insights.slice(0, 3).map((article, index) => (
             <InsightCard article={article} key={article.slug} priority={index === 0} />
           ))}
         </div>

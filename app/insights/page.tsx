@@ -33,7 +33,7 @@ export default function InsightsPage() {
         <section className="insights-featured" aria-labelledby="featured-title">
           <h2 id="featured-title">Featured</h2>
           <div className="insights-featured__grid">
-            {insights.map((article, index) => (
+            {insights.slice(0, 2).map((article, index) => (
               <InsightCard article={article} key={article.slug} priority={index === 0} />
             ))}
           </div>
