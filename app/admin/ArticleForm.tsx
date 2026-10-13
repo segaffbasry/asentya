@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import type { CmsArticle, CmsEntry } from "@/lib/cms-types";
+import { ArrowLeftIcon, ArrowTopRightIcon, CheckIcon, Cross2Icon, EyeOpenIcon, FontBoldIcon, FontItalicIcon, HeadingIcon, ImageIcon, Link2Icon, ListBulletIcon, QuoteIcon, ResetIcon, TextAlignLeftIcon, UploadIcon } from "@radix-ui/react-icons";
 
 function newArticle(): CmsArticle {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -75,7 +76,7 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
 
   const disabled = busy || uploading;
   return <>
-    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}>← Articles</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}>Preview</button><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}>{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><button className="cms-button cms-primary" onClick={() => save(true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"} ↗</button></div></div>
+    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}><ArrowLeftIcon aria-hidden="true" />Articles</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}><EyeOpenIcon aria-hidden="true" />Preview</button><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}><CheckIcon aria-hidden="true" />{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><button className="cms-button cms-primary" onClick={() => save(true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"}<ArrowTopRightIcon aria-hidden="true" /></button></div></div>
     {error && <p className="cms-error" role="alert">{error}</p>}
     <div className="cms-editor-grid">
       <section className="cms-writing-card"><p className="cms-eyebrow">{initial ? "EDIT ARTICLE" : "NEW ARTICLE"}</p>
@@ -85,16 +86,16 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
         }} /></label>
         <label className="cms-byline-field"><span className="cms-sr-only">Author byline</span><input placeholder="By Author Name | Role" value={article.byline} onChange={(event) => change("byline", event.target.value)} /></label>
         <div className="cms-toolbar" role="toolbar" aria-label="Article formatting">
-          <button title="Bold" aria-label="Bold" onClick={() => editor?.chain().focus().toggleBold().run()}><strong>B</strong></button>
-          <button title="Italic" aria-label="Italic" onClick={() => editor?.chain().focus().toggleItalic().run()}><em>I</em></button>
-          <button title="Heading" aria-label="Heading" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
-          <button title="Bullet list" aria-label="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()}>• List</button>
-          <button title="Numbered list" aria-label="Numbered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()}>1. List</button>
-          <button title="Quote" aria-label="Quote" onClick={() => editor?.chain().focus().toggleBlockquote().run()}>“</button>
-          <button title="Add link" aria-label="Add link" onClick={() => setLinkInput(editor?.getAttributes("link").href || "")}>Link</button>
-          <button title="Add image" aria-label="Add image" onClick={() => inlineFile.current?.click()} disabled={uploading}>Image</button>
-          <button title="Undo" aria-label="Undo" onClick={() => editor?.chain().focus().undo().run()}>↶</button>
-          <button title="Redo" aria-label="Redo" onClick={() => editor?.chain().focus().redo().run()}>↷</button>
+          <button title="Bold" aria-label="Bold" onClick={() => editor?.chain().focus().toggleBold().run()}><FontBoldIcon aria-hidden="true" /></button>
+          <button title="Italic" aria-label="Italic" onClick={() => editor?.chain().focus().toggleItalic().run()}><FontItalicIcon aria-hidden="true" /></button>
+          <button title="Heading" aria-label="Heading" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><HeadingIcon aria-hidden="true" /></button>
+          <button title="Bullet list" aria-label="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()}><ListBulletIcon aria-hidden="true" /></button>
+          <button title="Numbered list" aria-label="Numbered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()}><TextAlignLeftIcon aria-hidden="true" /><span className="cms-toolbar-label">Numbered</span></button>
+          <button title="Quote" aria-label="Quote" onClick={() => editor?.chain().focus().toggleBlockquote().run()}><QuoteIcon aria-hidden="true" /></button>
+          <button title="Add link" aria-label="Add link" onClick={() => setLinkInput(editor?.getAttributes("link").href || "")}><Link2Icon aria-hidden="true" /></button>
+          <button title="Add image" aria-label="Add image" onClick={() => inlineFile.current?.click()} disabled={uploading}><ImageIcon aria-hidden="true" /></button>
+          <button title="Undo" aria-label="Undo" onClick={() => editor?.chain().focus().undo().run()}><ResetIcon aria-hidden="true" /></button>
+          <button title="Redo" aria-label="Redo" onClick={() => editor?.chain().focus().redo().run()}><ResetIcon className="cms-icon-mirror" aria-hidden="true" /></button>
         </div>
         {linkInput !== null && <div className="cms-link-form"><input aria-label="Link address" type="url" placeholder="https://…" value={linkInput} onChange={(event) => setLinkInput(event.target.value)} /><button className="cms-button cms-secondary" onClick={() => {
           if (!linkInput) editor?.chain().focus().unsetLink().run();
@@ -112,13 +113,13 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
         <label>Category<select value={article.category} onChange={(event) => change("category", event.target.value)}>{["Insights", "Alerts", "Awards"].map((category) => <option key={category}>{category}</option>)}</select></label>
         <label>Short summary<textarea rows={4} placeholder="A short introduction for your readers…" value={article.excerpt} onChange={(event) => change("excerpt", event.target.value)} /></label>
       </div><div className="cms-detail-card"><h2>Cover image</h2>
-        {article.image ? <div className="cms-cover-preview" style={{ backgroundImage: `url(${JSON.stringify(coverPreview || article.image)})` }} role="img" aria-label="Cover image preview" /> : <div className="cms-upload-placeholder"><span aria-hidden="true">↥</span><p>Add an image to your article</p></div>}
-        <button className="cms-button cms-secondary cms-full" disabled={disabled} onClick={() => coverFile.current?.click()}>{uploading ? "Uploading…" : article.image ? "Change image" : "Upload image"}</button><p className="cms-file-hint">JPG, PNG, or WebP · Up to 4 MB</p>
+        {article.image ? <div className="cms-cover-preview" style={{ backgroundImage: `url(${JSON.stringify(coverPreview || article.image)})` }} role="img" aria-label="Cover image preview" /> : <div className="cms-upload-placeholder"><UploadIcon aria-hidden="true" /><p>Add an image to your article</p></div>}
+        <button className="cms-button cms-secondary cms-full" disabled={disabled} onClick={() => coverFile.current?.click()}><UploadIcon aria-hidden="true" />{uploading ? "Uploading…" : article.image ? "Change image" : "Upload image"}</button><p className="cms-file-hint">JPG, PNG, or WebP · Up to 4 MB</p>
         <input ref={coverFile} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(event) => { void upload(event.target.files?.[0], false); event.target.value = ""; }} />
       </div>{initial?.article.published && <button className="cms-unpublish" disabled={disabled} onClick={() => {
         if (window.confirm("Unpublish this article? It will remain saved as a draft.")) void save(false);
       }}>Move back to drafts</button>}</aside>
     </div>
-    {preview && <dialog ref={previewDialog} className="cms-preview" aria-labelledby="preview-title" onCancel={() => setPreview(false)}><div className="cms-preview-top"><span>Article preview</span><button className="cms-button cms-secondary" onClick={() => setPreview(false)}>Close preview</button></div><article><p className="cms-eyebrow">{article.category} · {article.date}</p><h1 id="preview-title">{article.title || "Untitled article"}</h1>{article.image && <div className="cms-preview-cover" style={{ backgroundImage: `url(${JSON.stringify(coverPreview || article.image)})` }} role="img" aria-label="Article cover" />}<p>{article.byline}</p><div className="cms-prose" dangerouslySetInnerHTML={{ __html: article.body }} /></article></dialog>}
+    {preview && <dialog ref={previewDialog} className="cms-preview" aria-labelledby="preview-title" onCancel={() => setPreview(false)}><div className="cms-preview-top"><span>Article preview</span><button className="cms-button cms-secondary" onClick={() => setPreview(false)}><Cross2Icon aria-hidden="true" />Close preview</button></div><article><p className="cms-eyebrow">{article.category} · {article.date}</p><h1 id="preview-title">{article.title || "Untitled article"}</h1>{article.image && <div className="cms-preview-cover" style={{ backgroundImage: `url(${JSON.stringify(coverPreview || article.image)})` }} role="img" aria-label="Article cover" />}<p>{article.byline}</p><div className="cms-prose" dangerouslySetInnerHTML={{ __html: article.body }} /></article></dialog>}
   </>;
 }

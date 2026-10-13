@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRightIcon, EyeClosedIcon, EyeOpenIcon, ReloadIcon } from "@radix-ui/react-icons";
 
 export function Login({ configured }: { configured: boolean }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -22,24 +26,18 @@ export function Login({ configured }: { configured: boolean }) {
   }
 
   return <div className="cms-login-wrap">
-    <section className="cms-login-intro">
-      <p className="cms-eyebrow">ASENTYA EDITOR</p>
-      <h1>A space for<br />your next insight.</h1>
-      <p>Write, refine, and publish your articles.<br />Everything you need, in one place.</p>
-      <div className="cms-login-features"><span>Simple writing tools</span><span>Drafts & previews</span><span>One-click publishing</span></div>
-    </section>
+    <Link className="cms-login-brand" href="/" aria-label="Asentya home"><Image src="/images/logo-color.svg" width={142} height={51} alt="Asentya Legal Advisor" priority /></Link>
     <section className="cms-login-card" aria-labelledby="login-title">
-      <div className="cms-login-icon" aria-hidden="true">✎</div>
-      <h2 id="login-title">Welcome back</h2>
-      <p>Sign in to manage Asentya’s articles.</p>
-      {!configured && <p className="cms-notice">Your editor is ready. Sign-in is waiting for the website administrator to finish setup.</p>}
+      <h1 id="login-title">Sign in to your account</h1>
       <form onSubmit={signIn}>
-        <label>Email address<input type="email" name="email" autoComplete="username" defaultValue="admin@asentya.com" required /></label>
-        <label>Password<input type="password" name="password" autoComplete="current-password" placeholder="Enter your password" required maxLength={256} /></label>
+        <label>Email<input type="email" name="email" autoComplete="username" defaultValue="admin@asentya.com" required /></label>
+        <label>Password<span className="cms-password-field"><input type={showPassword ? "text" : "password"} name="password" autoComplete="current-password" required maxLength={256} /><button type="button" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? <EyeClosedIcon aria-hidden="true" /> : <EyeOpenIcon aria-hidden="true" />}</button></span></label>
         {error && <p className="cms-error" role="alert">{error}</p>}
-        <button className="cms-button cms-primary" disabled={busy || !configured}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
+        <button className="cms-button cms-primary" disabled={busy || !configured}>{busy ? <><ReloadIcon className="cms-spin" aria-hidden="true" />Signing in…</> : <>Sign in<ArrowRightIcon aria-hidden="true" /></>}</button>
       </form>
-      <p className="cms-login-help">Need access? Contact the website administrator.</p>
+      {!configured && <p className="cms-login-setup" role="status">Sign-in will be available once account setup is complete.</p>}
     </section>
+    <p className="cms-login-help">Need access? Contact the website administrator.</p>
+    <p className="cms-login-copyright">© Asentya Legal Advisor</p>
   </div>;
 }
