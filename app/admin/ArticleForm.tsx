@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
+import { Tooltip } from "./Tooltip";
+import type { BurstOrigin } from "./Confetti";
 import type { CmsArticle, CmsEntry } from "@/lib/cms-types";
 import { ArrowTopRightIcon, CheckIcon, Cross2Icon, EyeOpenIcon, FontBoldIcon, FontItalicIcon, HeadingIcon, ImageIcon, Link2Icon, ListBulletIcon, QuoteIcon, ResetIcon, TextAlignLeftIcon, UploadIcon } from "@radix-ui/react-icons";
 
@@ -12,7 +14,7 @@ function newArticle(): CmsArticle {
   return { title: "", slug: "", published: false, date: today, category: "Insights", byline: "", excerpt: "", image: "", body: "" };
 }
 
-export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry; onClose: () => void; onSaved: (entry: CmsEntry) => void }) {
+export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry; onClose: () => void; onSaved: (entry: CmsEntry, burst?: BurstOrigin) => void }) {
   const [article, setArticle] = useState<CmsArticle>(initial?.article || newArticle);
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -25,6 +27,7 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
   const coverFile = useRef<HTMLInputElement>(null);
   const inlineFile = useRef<HTMLInputElement>(null);
   const previewDialog = useRef<HTMLDialogElement>(null);
+  const publishButton = useRef<HTMLButtonElement>(null);
   const panelDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { panelDialog.current?.showModal(); }, []);
   const editor = useEditor({
@@ -61,13 +64,14 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
     finally { setUploading(false); }
   }
 
-  async function save(published: boolean) {
+  async function save(published: boolean, celebrate = false) {
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/admin/articles", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ article: { ...article, published }, sha: initial?.sha }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      setDirty(false); onSaved(result);
+      const rect = publishButton.current?.getBoundingClientRect();
+      setDirty(false); onSaved(result, celebrate && rect ? { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 } : undefined);
     } catch (error) { setError(error instanceof Error ? error.message : "Could not save. Please try again."); }
     finally { setBusy(false); }
   }
@@ -79,21 +83,21 @@ export function ArticleForm({ initial, onClose, onSaved }: { initial?: CmsEntry;
   const disabled = busy || uploading;
   return <dialog ref={panelDialog} className="cms-editor-panel" aria-label={initial ? "Edit article" : "New article"} onCancel={(event) => { event.preventDefault(); if (!disabled) close(); }}>
     {(busy || uploading) && <div className="cms-operation-bar" role="status"><span /><span className="cms-sr-only">{uploading ? "Uploading image" : "Saving article"}</span></div>}
-    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}><Cross2Icon aria-hidden="true" />Close</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}><EyeOpenIcon aria-hidden="true" />Preview</button><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}><CheckIcon aria-hidden="true" />{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><button className="cms-button cms-primary" onClick={() => save(true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"}<ArrowTopRightIcon aria-hidden="true" /></button></div></div>
+    <div className="cms-editor-heading"><button className="cms-back" onClick={close} disabled={disabled}><Cross2Icon aria-hidden="true" />Close</button><div className="cms-actions"><span className="cms-save-state">{dirty ? "Unsaved changes" : "Saved"}</span><Tooltip text="Preview before publishing"><button className="cms-button cms-secondary" onClick={() => setPreview(true)} disabled={disabled}><EyeOpenIcon aria-hidden="true" />Preview</button></Tooltip><button className="cms-button cms-secondary" onClick={() => save(initial?.article.published ?? false)} disabled={disabled}><CheckIcon aria-hidden="true" />{busy ? "Saving…" : initial?.article.published ? "Save changes" : "Save draft"}</button><Tooltip text="Publish the article and update the website"><button ref={publishButton} className="cms-button cms-primary" onClick={() => save(true, true)} disabled={disabled}>{initial?.article.published ? "Update article" : "Publish article"}<ArrowTopRightIcon aria-hidden="true" /></button></Tooltip></div></div>
     {error && <p className="cms-error" role="alert">{error}</p>}
     <div className="cms-editor-grid">
       <section className="cms-writing-card"><p className="cms-eyebrow">{initial ? "EDIT ARTICLE" : "NEW ARTICLE"}</p>
         <div className="cms-toolbar" role="toolbar" aria-label="Article formatting">
-          <button title="Bold" aria-label="Bold" onClick={() => editor?.chain().focus().toggleBold().run()}><FontBoldIcon aria-hidden="true" /></button>
-          <button title="Italic" aria-label="Italic" onClick={() => editor?.chain().focus().toggleItalic().run()}><FontItalicIcon aria-hidden="true" /></button>
-          <button title="Heading" aria-label="Heading" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><HeadingIcon aria-hidden="true" /></button>
-          <button title="Bullet list" aria-label="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()}><ListBulletIcon aria-hidden="true" /></button>
-          <button title="Numbered list" aria-label="Numbered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()}><TextAlignLeftIcon aria-hidden="true" /><span className="cms-toolbar-label">Numbered</span></button>
-          <button title="Quote" aria-label="Quote" onClick={() => editor?.chain().focus().toggleBlockquote().run()}><QuoteIcon aria-hidden="true" /></button>
-          <button title="Add link" aria-label="Add link" onClick={() => setLinkInput(editor?.getAttributes("link").href || "")}><Link2Icon aria-hidden="true" /></button>
-          <button title="Add image" aria-label="Add image" onClick={() => inlineFile.current?.click()} disabled={uploading}><ImageIcon aria-hidden="true" /></button>
-          <button title="Undo" aria-label="Undo" onClick={() => editor?.chain().focus().undo().run()}><ResetIcon aria-hidden="true" /></button>
-          <button title="Redo" aria-label="Redo" onClick={() => editor?.chain().focus().redo().run()}><ResetIcon className="cms-icon-mirror" aria-hidden="true" /></button>
+          <Tooltip text="Bold"><button aria-label="Bold" onClick={() => editor?.chain().focus().toggleBold().run()}><FontBoldIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Italic"><button aria-label="Italic" onClick={() => editor?.chain().focus().toggleItalic().run()}><FontItalicIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Heading"><button aria-label="Heading" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><HeadingIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Bullet list"><button aria-label="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()}><ListBulletIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Numbered list"><button aria-label="Numbered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()}><TextAlignLeftIcon aria-hidden="true" /><span className="cms-toolbar-label">Numbered</span></button></Tooltip>
+          <Tooltip text="Quote"><button aria-label="Quote" onClick={() => editor?.chain().focus().toggleBlockquote().run()}><QuoteIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Add link"><button aria-label="Add link" onClick={() => setLinkInput(editor?.getAttributes("link").href || "")}><Link2Icon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Add image"><button aria-label="Add image" onClick={() => inlineFile.current?.click()} disabled={uploading}><ImageIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Undo"><button aria-label="Undo" onClick={() => editor?.chain().focus().undo().run()}><ResetIcon aria-hidden="true" /></button></Tooltip>
+          <Tooltip text="Redo"><button aria-label="Redo" onClick={() => editor?.chain().focus().redo().run()}><ResetIcon className="cms-icon-mirror" aria-hidden="true" /></button></Tooltip>
         </div>
         {linkInput !== null && <div className="cms-link-form"><input aria-label="Link address" type="url" placeholder="https://…" value={linkInput} onChange={(event) => setLinkInput(event.target.value)} /><button className="cms-button cms-secondary" onClick={() => {
           if (!linkInput) editor?.chain().focus().unsetLink().run();

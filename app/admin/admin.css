@@ -251,3 +251,13 @@
   .cms-shell *, .cms-shell *::before, .cms-shell *::after { animation: none !important; transition: none !important; }
   .cms-loader-track > span { width: 100%; opacity: .6; }
 }
+
+.cms-confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 150; }
+.cms-tooltip { position: relative; display: inline-flex; align-items: center; }
+.cms-tooltip-bubble { position: absolute; z-index: 20; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 220px; padding: 7px 10px; border-radius: 6px; background: #083562; color: #fff; box-shadow: 0 4px 12px #08356220; font-size: 11px; font-weight: 400; line-height: 1.45; text-align: center; pointer-events: none; animation: cms-tooltip-in 160ms var(--cms-ease) both; }
+.cms-editor-heading .cms-tooltip-bubble, .cms-collection-toolbar .cms-tooltip-bubble { bottom: auto; top: calc(100% + 8px); animation-name: cms-tooltip-below; }
+.cms-editor-heading .cms-tooltip:last-child .cms-tooltip-bubble, .cms-collection-toolbar .cms-tooltip-bubble { left: auto; right: 0; transform: none; animation-name: cms-tooltip-edge; }
+@keyframes cms-tooltip-in { from { opacity: 0; transform: translate(-50%, 4px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes cms-tooltip-below { from { opacity: 0; transform: translate(-50%, -4px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes cms-tooltip-edge { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .cms-confetti { display: none; } .cms-tooltip-bubble { animation: none; } }
